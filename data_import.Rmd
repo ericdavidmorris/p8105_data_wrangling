@@ -7,4 +7,23 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
 ```
+
+## Import FAS csv files
+
+Import my first csv (FAS_litters)
+
+```{r}
+litters_data = read_csv(file = "./Data/FAS_litters.csv")
+litters_data = janitor::clean_names(litters_data)
+```
+
+Import my second csv (FAS_pups)
+
+```{r}
+pups_data = read_csv(file = "./Data/FAS_pups.csv")
+pups_data = janitor::clean_names(pups_data)
+```
+
