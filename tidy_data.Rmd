@@ -48,3 +48,47 @@ pulse_df =
   mutate(visit = replace(visit, visit == "bl", "00m"))
 ```
 
+## Revisit FAS_litters
+
+```{r}
+litters_data = read_csv("./data/FAS_litters.csv", col_types = "ccddiiii") %>%
+   janitor::clean_names() %>%
+  separate(group, into = c("dose", "day"), 3) %>% 
+  mutate(dose = tolower(dose),
+         wt_gain = gd18_weight - gd0_weight) %>%
+  arrange(litter_number)
+```
+
+Learning Assessment, data cleaning/tidying
+
+```{r}
+litters_data %>% 
+  select(litter_number, ends_with("weight")) %>%  
+  gather(key = gd, value = weight, gd0_weight:gd18_weight) %>% 
+  mutate(gd = recode(gd, "gd0_weight" = 0, "gd18_weight" = 18)) %>% 
+  arrange(litter_number)
+```
+
+
+## Spread
+
+Create 'analyis_result'
+
+```{r}
+analysis_result = tibble(
+  group = c("treatment", "treatment", "placebo", "placebo"),
+  time = c("pre", "post", "pre", "post"),
+  mean = c(4, 8, 3.5, 4)
+)
+```
+
+Make it readable (spread, the reverse of gather)
+
+```{r}
+analysis_result %>% 
+  spread(key = time, value = mean) %>%
+  knitr::kable()
+```
+
+
+

@@ -77,3 +77,66 @@ pulse_df =
 
     ## Warning: attributes are not identical across measure variables;
     ## they will be dropped
+
+Revisit FAS\_litters
+--------------------
+
+``` r
+litters_data = read_csv("./data/FAS_litters.csv", col_types = "ccddiiii") %>%
+   janitor::clean_names() %>%
+  separate(group, into = c("dose", "day"), 3) %>% 
+  mutate(dose = tolower(dose),
+         wt_gain = gd18_weight - gd0_weight) %>%
+  arrange(litter_number)
+```
+
+Learning Assessment, data cleaning/tidying
+
+``` r
+litters_data %>% 
+  select(litter_number, ends_with("weight")) %>%  
+  gather(key = gd, value = weight, gd0_weight:gd18_weight) %>% 
+  mutate(gd = recode(gd, "gd0_weight" = 0, "gd18_weight" = 18)) %>% 
+  arrange(litter_number)
+```
+
+    ## # A tibble: 98 x 3
+    ##    litter_number      gd weight
+    ##    <chr>           <dbl>  <dbl>
+    ##  1 #1/2/95/2           0   27  
+    ##  2 #1/2/95/2          18   42  
+    ##  3 #1/5/3/83/3-3/2     0   NA  
+    ##  4 #1/5/3/83/3-3/2    18   NA  
+    ##  5 #1/6/2/2/95-2       0   NA  
+    ##  6 #1/6/2/2/95-2      18   NA  
+    ##  7 #1/82/3-2           0   NA  
+    ##  8 #1/82/3-2          18   NA  
+    ##  9 #100                0   20  
+    ## 10 #100               18   39.2
+    ## # ... with 88 more rows
+
+Spread
+------
+
+Create 'analyis\_result'
+
+``` r
+analysis_result = tibble(
+  group = c("treatment", "treatment", "placebo", "placebo"),
+  time = c("pre", "post", "pre", "post"),
+  mean = c(4, 8, 3.5, 4)
+)
+```
+
+Make it readable (spread, the reverse of gather)
+
+``` r
+analysis_result %>% 
+  spread(key = time, value = mean) %>%
+  knitr::kable()
+```
+
+| group     |  post|  pre|
+|:----------|-----:|----:|
+| placebo   |     4|  3.5|
+| treatment |     8|  4.0|
